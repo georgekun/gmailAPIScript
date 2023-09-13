@@ -2,3 +2,5 @@ emails.xlsx
 cred.json
 token.json
 /venv
+information.py
+__pycache__

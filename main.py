@@ -1,7 +1,7 @@
 
 import base64
 import os.path
-
+import pprint
 import openpyxl
 
 from google.auth.transport.requests import Request
@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 
 from email.message import EmailMessage
 
-
+import information
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
@@ -24,7 +24,7 @@ def gmail_send_message(service,
                        message_text:str = "This is automated draft mail", html = None):
     if not service:
         return "Нет сервиса."
-    
+
     try:
         service = service
   
@@ -35,13 +35,14 @@ def gmail_send_message(service,
             if html:
                 message = MIMEText(html,"html")
         
-                message['Subject'] = message_theme
-                message['From'] = from_mail
-                message['To'] = email
+            message['Subject'] = message_theme
+            message['From'] = from_mail
+            message['To'] = email
                 
-                encoded_message = base64.urlsafe_b64encode(message.as_bytes()) \
-                    .decode()
-            
+         
+            encoded_message = base64.urlsafe_b64encode(message.as_bytes()) \
+                        .decode()
+
             create_message = {
                         'raw': encoded_message
                     }
@@ -92,22 +93,24 @@ def parse_excel_file(path:str,sheet_name:str,column:int, )->list:
             column_data.append(cell_value)
             # print(type(cell_value))
     
-    workbook.close()
-  
-    
+    workbook.close()    
     return column_data
 
 def main():
 
     service = return_service()
     # emails = ['knyazyan.2021@list.ru', 'armenovhich2001@bk.ru']
-    text =""
-    theme = "Проверка программы"
     
     data = parse_excel_file('emails.xlsx',sheet_name="участники",column=5)
+    pprint.pprint(data)
     test = parse_excel_file('emails.xlsx',sheet_name="тест",column=1)
     
-    gmail_send_message(service,to_mail = test, message_text=text, message_theme=theme,html="<p>привет</p>")#
+    gmail_send_message( service,
+                        to_mail = test,
+                        message_text=information.text, 
+                        message_theme=information.theme,
+                        )
+                  
 
 if __name__ == '__main__':
     main()
