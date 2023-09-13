@@ -18,10 +18,11 @@ import information
 SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
 def gmail_send_message(service,
-                       to_mail:list = ['armenovich2001@bk.ru'],
-                       from_mail:str='jorj.knyazyan.15@gmail.com',#
-                       message_theme:str='Automated draft',
-                       message_text:str = "This is automated draft mail", html = None):
+                       to_mail:list,
+                       from_mail:str,#
+                       message_theme:str,
+                       message_text:str,
+                        html = None):
     if not service:
         return "Нет сервиса."
 
@@ -46,8 +47,12 @@ def gmail_send_message(service,
             create_message = {
                         'raw': encoded_message
                     }
-            send_message = (service.users().messages().send(userId="me", body=create_message).execute())
-            print(f"to: {email}, status: Sucсessfuly")
+            try:
+                send_message = (service.users().messages().send(userId="me", body=create_message).execute())
+                print(f"to: {email}, status: Sucсessfuly")   
+
+            except:
+                print(f"to: {email}, status: Error")
             
     except HttpError as error:
         print(F'An error occurred: {error}')
@@ -99,18 +104,17 @@ def parse_excel_file(path:str,sheet_name:str,column:int, )->list:
 def main():
 
     service = return_service()
-    # emails = ['knyazyan.2021@list.ru', 'armenovhich2001@bk.ru']
-    
-    data = parse_excel_file('emails.xlsx',sheet_name="участники",column=5)
-    pprint.pprint(data)
+   
     test = parse_excel_file('emails.xlsx',sheet_name="тест",column=1)
     
+
     gmail_send_message( service,
                         to_mail = test,
+                        from_mail="jorj.knyazyan.15@gmail.com",
                         message_text=information.text, 
                         message_theme=information.theme,
                         )
                   
-
+    
 if __name__ == '__main__':
     main()
